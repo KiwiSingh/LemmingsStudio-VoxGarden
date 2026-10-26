@@ -1,0 +1,8 @@
+{
+  "upstream": "https://github.com/KiwiSingh/VoxGarden",
+  "revision": "8ab73f3a123a92655f5d340183a91f9a01848152",
+  "distribution": "LemmingsStudio-bound integrated edition only",
+  "external_host_installers": false,
+  "upstream_local_modifications_included": false,
+  "implementation_status": "source pinned; integration not yet implemented"
+}
