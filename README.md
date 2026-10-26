@@ -1,112 +1,46 @@
-# VoxGarden — Kiwi Singh
+# VoxGarden for LemmingsStudio
 
-**English** · [हिन्दी](README.hi.md) · [Deutsch](README.de.md) · [Nederlands](README.nl.md) · [Русский](README.ru.md)
+This independent repository develops the LemmingsStudio-bound VoxGarden edition.
+The existing [KiwiSingh/VoxGarden](https://github.com/KiwiSingh/VoxGarden) repository
+and its local modifications are not changed by this work.
 
-A key-aware vocal choir effect by **Kiwi Singh**, with natural backing parts, playful voice transformations and optional local AI printing. **Version 3.0.0 — Amphi** · Apple Silicon macOS · VST3 + standalone.
+## Source baseline and current status
 
-## New in 3.0 “Amphi”: 24 voices and remembered appearance
+The clean source snapshot is pinned to upstream commit
+`8ab73f3a123a92655f5d340183a91f9a01848152`. It excludes upstream's uncommitted
+Windows experiments. The source pin is complete; application-private device
+integration, Windows build validation and neural portability are not complete.
+See `LEMMINGS_INTEGRATION.json` for provenance.
 
-VoxGarden 3.0 Amphi adds **1–24 choir voices**, edited in three banks of eight with independent mute/solo and voice controls. **Abbey Ensemble 24**, **Chamber Ensemble 16** and **Velvet Abbey 24** are original DSP choir textures with varied voicing, placement, formants and depth—not Cymatics recordings or an Abbey Road sample library. Unused voices skip pitch processing. The last explicitly chosen theme and light/dark setting become the default for fresh instances; saved projects keep their own appearance and do not replace that default. Original 2.0 parameter IDs, indices and ranges remain intact; extra controls are appended. Existing eight-voice sounds retain their sizes.
+`UPSTREAM_README.md` records the original product and its behavior. Its external
+DAW installation instructions are historical upstream documentation, not the
+installation contract of this integrated edition. The inherited build files also
+still describe upstream wrappers; they must not be used as integrated release
+packaging.
 
-![VoxGarden 3.0 Amphi — Abbey Ensemble 24](Media/VoxGarden-3.0-Amphi-abbey24.png)
+## Integrated product contract
 
-### Amphitheatre and genre sounds
+- Runs inside LemmingsStudio. No external DAW or standalone installer is delivered.
+- Reuses VoxGarden's native processing, original editor, parameter identifiers,
+  factory sounds, score/lyrics tools and appearance. Do not replace these with
+  a simplified Python effect.
+- Build an application-private device target, connect it through the native
+  device-worker boundary, and report actual latency to LemmingsStudio.
+- Preserve per-instance processor, score, lyrics and appearance state within
+  `.lemmingsproject`. Share model storage, never musical instance state.
+- Transfer project context through explicit actions. Return mix/stems to the
+  originating position; cancellation retains source audio and score.
+- Validate Windows DSP before neural workflows. Apple-only inference needs a
+  tested Windows runtime and model/voice rights verification, not a silent no-op.
+- Test independent instances, original presets, host recall, latency, aligned
+  rendering, cancellation, missing models, offline DSP and worker recovery.
 
-Amphi also replaces the crowded stage with an original **perspective amphitheatre**: high/low viewing angles, numbered singer figures, click-to-select with matching bank/row highlighting, and direct **M/S** controls for the selected singer. Drag changes its pan and depth; clicking and changing the camera do not change the sound. Coincident singers receive display-only separation so every voice remains selectable.
+The host's implementation gates are maintained in
+[LemmingsStudio's parity record](https://github.com/KiwiSingh/LemmingsStudio/blob/rewrite/python-windows/Docs/Parity/IMPLEMENTATION.md).
 
-Four genre menus add **12 starting sounds**: Bollywood (Intimate Backing, Cinematic Chorus, Raga Backing), Italodisco (Octave Lights, Silver Choir, Midnight Fifths), disco polo (Tight Doubles, Chorus Lift, Festival Stack), and classical (Chamber Voices, SATB Ensemble, Sacred Hall). There are now **77 factory sounds** in Amphi. Genre sounds preserve the chosen root and scale/raga; Raga Backing uses your selected note collection rather than automatically choosing a raga. These are DSP production starting points, not sampled choirs or complete genre arrangements.
+## Licensing
 
-## Screenshots
-
-![VoxGarden in English, dark theme](Media/VoxGarden-3.0-Amphi-en-rose.png)
-
-## New in 2.0: notes + lyrics and colourful themes
-
-VoxGarden 2.0 includes an **experimental score-to-singing workspace**: import standard MIDI, select a melody track, assign Unicode syllables and edit note names, start and duration in a table. Isolated audio supplies an editable monophonic pitch sketch. **Download voices inside the plugin** (~401 MB of models plus a private runtime/cache), choose from ten voices, render a dry vocal, then **Drag dry vocal to Live** onto the audio track containing VoxGarden to audition and adjust harmonies before printing. **Supertonic 3 neural pronunciation + PSOLA** retiming supports English, Hindi in Devanagari, German, Japanese, Russian and Dutch. **Core ML with GPU-preferred settings** handles neural inference; CPU handles score retiming and unsupported graph operations. This is speech adapted into singing, not a trained singing model; naturalness needs auditioning. **Rose, Ocean and Sunset** each offer light and dark variants. [Workflow, benchmarks and limits](Singing.md).
-
-
-![Notes and lyrics preview](Media/VoxGarden-3.0-Amphi-en-score.png)
-
-<details><summary>Rose / 🌸</summary>
-
-![VoxGarden Rose](Media/VoxGarden-3.0-Amphi-en-rose.png)
-
-</details>
-
-MIDI chords and overlapping notes retain their durations, including repeated pitches. Click a row to select it; Cmd/Ctrl-click selects several notes, Shift-click selects a range, and double-click edits a cell. Lyrics can be assigned per note or per simultaneous chord.
-
-## SnappySnap support
-
-Load VoxGarden VST3 as an effect in **SnappySnapFX**, then save different harmony, voice-count, formant and Mutation settings as **Snaps**. This lets one choir move between natural and unusual sounds. Sound parameters and host-state restoration are supported. End-to-end morphing has been confirmed by the user with Electric Smudge's official seven-day SnappySnapFX trial. Offline AI/singing renders are files, not a real-time morphable synthesis engine.
-
-## What it does
-
-- **SnappySnapFX support:** host VoxGarden and store different sound settings as Snaps; see the compatibility notes below.
-- **1–24 choir voices**, with individual harmony, level, pan, formant and depth controls; per-voice mute and additive solo.
-- **77 factory sounds**, including female-choir/male-lead and male-choir/female-lead textures.
-- **Eight raga-inspired families:** Yaman, Bhupali, Kafi, Bhairavi, Bhairav, Malkauns, Durga and Hamsadhwani. Each has an original sound and both voice-cast variants, alongside Western note-set names and transposed notes.
-- Scale harmony, MIDI chords and chromatic intervals; timing, detune, vibrato, room and experimental Mutation.
-- **Capture the input of its own track**, then export a choir mix and aligned voice stems. Capture and printing monitor the dry vocal.
-- Optional **Seed-VC AI printing**, with female, male, original mixed or alternating reference casts. After setup, conversion stays local and offline.
-- Light/dark themes and English, Hindi, German, Dutch and Russian interfaces, saved per instance.
-
-## Download and install
-
-[**Download v3.0.0 for Apple Silicon macOS**](https://github.com/KiwiSingh/VoxGarden/releases/download/v3.0.0/VoxGarden-3.0.0-Amphi-macOS-arm64.zip) · [All releases](https://github.com/KiwiSingh/VoxGarden/releases)
-
-1. Extract the ZIP and close your audio host.
-2. Run **Install.command**. It installs the VST3 in your user plugin folder and backs up an earlier VoxGarden installation.
-3. Open/rescan Ableton Live and find **VST3 → Kiwi Singh → VoxGarden**.
-
-The package includes a standalone app. The native build targets macOS 12+; supplied binaries are arm64. Intel/Windows/Linux binaries and an AU package are not supplied. Builds are ad-hoc signed, not Apple-notarized. The installer repairs the download marker only on this signature-verified plugin.
-
-## Use in Ableton Live
-
-Choose the song's **Root / Sa**, then a scale or raga and a starting sound. Under **Raga-inspired choirs**, open a raga submenu for its three variants. Western relationships describe the selected note collection; they do not detect your song's key. [Raga / Western-note guide](Ragas.md).
-
-Click **Render vocal + stems**, play the passage in Live, then **Stop + render**. The plugin captures its input before its own processing, including earlier effects in the chain. Output appears in `Music/VoxGarden Renders`: original input, Choir Mix and numbered voice WAVs. The print uses settings at Stop, not captured automation. File rendering and drag/drop are also available.
-
-**M** preserves a voice's level while muting it. Multiple **S** solos combine; mute takes precedence. Set Choir Mix to 100% to hear soloed choir parts without the dry lead. Excluded printed stems remain aligned and silent.
-
-Keep Delay Compensation enabled: DSP latency is about **192 ms at 48 kHz**. Record a lead dry, then add the choir. Print MIDI-chord performances with Live's recorder. SnappySnapFX can host different parameter states as Snaps. The user has confirmed morphing with Electric Smudge's official trial.
-
-For cross-track dragging, turn off **Settings → Plug-Ins → Auto-Hide Plug-In Windows** in Live, then open **Notes + lyrics**. The lyrics workspace floats above the host. Export MIDI clips to `.mid` before importing them; direct internal MIDI-clip transfer is a known limitation.
-
-## Optional AI singers
-
-The new score-singing voices are downloaded inside **Notes + lyrics**. The separate setup below is only for the older Seed-VC voice-conversion workflow.
-
-Run **Setup AI.command** from the release package once, or `bash "AI/Setup AI.command"` from this source tree. It needs Git and either **uv** or **Python 3.10**, plus internet access and several GB for initial model setup. Existing model downloads can be reused when updating.
-
-Enable **AI singers on print** and choose **AI Voice Cast**. Live playback remains DSP; neural conversion happens during printing. Import the rendered mix/stems into Live to hear the AI result. Longer takes and larger choirs take longer; progress shows the singer and synthesis steps. Cancel retains the source take.
-
-The attributed VCTK reference pack has five female and three male speech references, cycled for larger casts. It is not a sampled professional choir. Pronunciation, timing and naturalness depend on the source. Raga masks constrain notes; pakad, meend, gamakas and direction-specific phrasing still come from your vocal. [AI details](AI/README.md) · [Voice credits](AI/Voices/ATTRIBUTION.txt).
-
-## Build from source
-
-Requires a C++17 toolchain, CMake 3.24+, Ninja and Git on macOS. Dependencies are pinned by commit.
-
-```sh
-git clone https://github.com/KiwiSingh/VoxGarden.git
-cd VoxGarden
-bash prepare-deps.sh
-cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES=arm64
-cmake --build build --target VoxGarden_VST3 VoxGarden_Standalone VoxGardenCheck
-ctest --test-dir build --output-on-failure
-```
-
-Artifacts are under `build/VoxGarden_artefacts/Release`. See [validation](VALIDATION.txt), [audit checklist](Audit-1.0.md) and [contributing](CONTRIBUTING.md). No AI weights or private input vocals are committed.
-
-## License and credits
-
-VoxGarden uses the **GNU AGPL v3** license included in [LICENSE](LICENSE). Dependency licenses remain separate: [JUCE](Licenses/JUCE.md), [Signalsmith Stretch](Licenses/Signalsmith-Stretch.txt), [Signalsmith Linear](Licenses/Signalsmith-Linear.txt), and [Seed-VC GPL v3](Licenses/Seed-VC-GPL-3.0.txt). VCTK references are **CC BY 4.0**, with attribution and corpus metadata in [AI/Voices](AI/Voices). This is an independent project; no Cymatics code, assets or presets are included.
-
-## Chord-led singing
-
-In **Notes + lyrics**, choose **Exact MIDI**, **Velocity-led chords** or **Chord-root chords**. MIDI velocity (1–127) is imported and editable. Chord modes group notes sharing at least 30 ms of overlap (or an onset within 2 ms), share the leader’s word, and render the leader louder than its harmonies. Assign one lyric per grouped chord or per note. Velocity mode chooses the strongest note; ties use the lowest. Root mode recognises common triads/sevenths, including inversions, and falls back to bass for uncertain roots. Pitches, note lengths and the original score stay intact. These modes control lyric sharing and mix balance, not expressive neural stress or automatic chord composition.
-
-**Ableton MIDI import:** export the MIDI clip to a `.mid` file first, then import or drag that file into VoxGarden. Direct internal MIDI-clip dragging is a known limitation. Dry WAV transfer back to Live and auditioning are user-confirmed. Neural score singing needs Apple Silicon macOS 14+; the DSP plugin targets macOS 12+.
-
-## ☕️ Support the Project
-
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/kiwisingh)
+The upstream GNU AGPLv3 license, dependency licenses and attribution remain in
+place. LemmingsStudio-bound describes this edition's packaging and integration;
+it does not remove any rights or obligations under those licenses. Sound/model
+redistribution rights require their own review.
